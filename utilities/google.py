@@ -1,12 +1,7 @@
-"""
-Install the Google AI Python SDK
-
-$ pip install google-generativeai
-"""
-
 import os
 import google.generativeai as genai
 from json import loads
+from utilities.database import connect_to_mysql, execute_query, MySQLConnection, commit, rollback
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
@@ -26,9 +21,13 @@ model = genai.GenerativeModel(
 
 
 class Session:
-
-    def __init__(self):
+    def __init__(self, host="localhost", user="root", password=""):
         self.chat_session = model.start_chat()
+        self.connection = connect_to_mysql(
+            host=host,
+            user=user,
+            password=password
+        )
 
     def get_response(self, inp: str) -> str:
         response = self.chat_session.send_message(
@@ -43,12 +42,33 @@ class Session:
             return list(result.values())[0]
         else:
             return result
-
-
-if __name__ == "__main__":
-    session = Session()
-    print(
-        session.get_response(
-            "I need all the data from the table student and find out the number of people who has an average score of 80 or more."
+        
+    def interpret(self, inp, query: str) -> str:
+        print(f"""Interpret the reply from mysql and reply
+Query: {query}
+Answer: {str(inp)}
+            """)
+        response = self.chat_session.send_message(
+            f"""Interpret the reply from mysql and reply
+Query: {query}
+Answer: {str(inp)}
+            """
         )
-    )
+        result = loads(response.text)
+        if isinstance(result, dict):
+            return list(result.values())[0]
+        else:
+            return result
+    
+    def __del__(self):
+        self.connection.close()
+
+    def execute_query(self, query: str):
+        command = self.get_response(query)
+        return execute_query(self.connection, command)
+    
+    def commit(self):
+        commit(self.connection)
+
+    def rollback(self):
+        rollback(self.connection)
