@@ -43,29 +43,34 @@ class Session:
         else:
             return result
         
-    def interpret(self, inp, query: str) -> str:
-        print(f"""Interpret the reply from mysql and reply
+    def interpret(self, inp, query: str, command: str = "") -> str:
+        print(f"""Interpret the reply
 Query: {query}
+Command: {command}
 Answer: {str(inp)}
             """)
         response = self.chat_session.send_message(
-            f"""Interpret the reply from mysql and reply
+            f"""Interpret the reply
 Query: {query}
+Command: {command}
 Answer: {str(inp)}
-            """
+            """,
+            generation_config={
+                "temperature": 1,
+                "top_p": 0.95,
+                "top_k": 64,
+                "max_output_tokens": 8192,
+                "response_mime_type": "text/plain",
+            }
         )
-        result = loads(response.text)
-        if isinstance(result, dict):
-            return list(result.values())[0]
-        else:
-            return result
+        return response.text
     
     def __del__(self):
         self.connection.close()
 
     def execute_query(self, query: str):
         command = self.get_response(query)
-        return execute_query(self.connection, command)
+        return execute_query(self.connection, command), command
     
     def commit(self):
         commit(self.connection)
