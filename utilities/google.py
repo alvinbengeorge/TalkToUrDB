@@ -2,12 +2,14 @@ import os
 import google.generativeai as genai
 from json import loads
 from utilities.database import connect_to_mysql, execute_query, MySQLConnection, commit, rollback
+from dotenv import load_dotenv
 
+load_dotenv()
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 # Create the model
 generation_config = {
-    "temperature": 1,
+    "temperature": 0,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -51,12 +53,13 @@ Answer: {str(inp)}
             """)
         response = self.chat_session.send_message(
             f"""Interpret the reply
+Note: Keep it small and try to show tables if tuples come
 Query: {query}
 Command: {command}
 Answer: {str(inp)}
             """,
             generation_config={
-                "temperature": 1,
+                "temperature": 0,
                 "top_p": 0.95,
                 "top_k": 64,
                 "max_output_tokens": 8192,
