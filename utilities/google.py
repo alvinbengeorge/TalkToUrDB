@@ -23,12 +23,13 @@ model = genai.GenerativeModel(
 
 
 class Session:
-    def __init__(self, host="localhost", user="root", password=""):
+    def __init__(self, host="localhost", user="root", password="", database="test"):
         self.chat_session = model.start_chat()
         self.connection = connect_to_mysql(
             host=host,
             user=user,
-            password=password
+            password=password,
+            database=database
         )
 
     def get_response(self, inp: str) -> str:

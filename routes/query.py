@@ -6,7 +6,7 @@ import uuid
 
 router = APIRouter()
 sessions = {
-    "default": Session(host="localhost", user="root", password="alvin")
+    "default": Session(host="localhost", user="root", password="alvin", database="test")
 }
 session_history = {
     "default": []
