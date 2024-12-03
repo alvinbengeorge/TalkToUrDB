@@ -20,7 +20,7 @@ def connect_to_mysql(host: str, user: str, password: str) -> Optional[MySQLConne
 def execute_query(connection: MySQLConnection, query) -> Optional[list]:
     """ Execute a single query """
     cursor = connection.cursor()
-    cursor.execute(query)
+    cursor.execute(query, multi=True)
     return {
         "output": cursor.fetchall(),
         "columns": cursor.column_names,
