@@ -11,7 +11,7 @@ This project aims to simplify the use of DBMS, by integrating a chatbot to SQL. 
 1. **Install Daytona**: Follow the [Daytona installation guide](https://www.daytona.io/docs/installation/installation/).  
 2. **Create the Workspace**:  
    ```bash  
-   daytona create <SAMPLE_REPO_URL> 
+   daytona create https://github.com/alvinbengeorge/TalkToUrDB/
    ```  
 
 ... MORE STEPS IF NEEDED ...
